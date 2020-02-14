@@ -1,0 +1,51 @@
+﻿@model List<Orders>
+@{
+    ViewData["Title"] = "Previous Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background-image: url(/content/images/WineGlass.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+</style>
+
+<h1>PreviousOrderList</h1>
+
+@if (Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="color:white">Order Number</th>
+                <th style="color:white">OrderDate</th>
+                <th style="color:white">OrderStatus</th>
+                <th style="color:white">Item</th>
+                <th style="color:white">Quantity</th>
+                <th style="color:white">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+            <tr>
+                <td style="color:white">@order.OrderId</td>
+                <td style="color:white">@order.OrderDate.Month/@order.OrderDate.Day/@order.OrderDate.Year</td>
+                <td style="color:white">@order.OrderStatus.OrderStatusDescription</td>
+                <td style="color:white">@order.Item.Name</td>
+                <td style="color:white">@order.Quantity</td>
+                <td style="color:white">@order.OrderTotal.ToString("C2")</td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>We currently do not have any wine. Please check back later!</p>
+}

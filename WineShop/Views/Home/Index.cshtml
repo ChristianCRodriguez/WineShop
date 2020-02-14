@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    body {
+        background-image: url(/content/images/WineHome.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment:fixed;
+    }
+</style>
+<div class="jumbotron" style="background: rgba(255, 255, 255, 0.25); text-align:center;">
+    <h1>Welcome to the Winery!</h1>
+    <h6>Proudly Pouring In New Baltimore Since 2007</h6>
+    <p><a asp-controller="Home" asp-action="WineList">Click To View Our Wine List</a></p>
+</div>
