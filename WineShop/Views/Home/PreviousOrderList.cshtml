@@ -4,48 +4,56 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
+@*<style>
     body {
-        background-image: url(/content/images/WineGlass.jpg);
+        background-image: url(/content/images/WineCorks.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;
         background-attachment: fixed;
     }
-</style>
+</style>*@
 
-<h1>PreviousOrderList</h1>
+<h1>Previous Order List</h1>
 
 @if (Model.Any())
 {
     <table class="table table-hover">
         <thead>
             <tr>
-                <th style="color:white">Order Number</th>
-                <th style="color:white">OrderDate</th>
-                <th style="color:white">OrderStatus</th>
-                <th style="color:white">Item</th>
-                <th style="color:white">Quantity</th>
-                <th style="color:white">Price</th>
+                <th>Order Number</th>
+                <th>OrderDate</th>
+                <th>OrderStatus</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var order in Model)
             {
-            <tr>
-                <td style="color:white">@order.OrderId</td>
-                <td style="color:white">@order.OrderDate.Month/@order.OrderDate.Day/@order.OrderDate.Year</td>
-                <td style="color:white">@order.OrderStatus.OrderStatusDescription</td>
-                <td style="color:white">@order.Item.Name</td>
-                <td style="color:white">@order.Quantity</td>
-                <td style="color:white">@order.OrderTotal.ToString("C2")</td>
-
-            </tr>
-            }
+                @if (order.OrderStatusId == 1)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.OrderDate.Month/@order.OrderDate.Day/@order.OrderDate.Year</td>
+                        <td>@order.OrderStatus.OrderStatusDescription</td>
+                        <td>@order.Item.Name</td>
+                        <td>@order.Quantity</td>
+                        <td>@order.OrderTotal.ToString("C2")</td>
+                        <td>
+                            <form asp-controller="Shopping" asp-action="VerifyRefund">
+                                <button type="submit" class="btn btn-dark" name="order" value="@order.OrderId">Return Item</button>
+                            </form>
+                        </td>
+                    </tr>
+                    }
+                }
         </tbody>
     </table>
 }
 else
 {
-    <p>We currently do not have any wine. Please check back later!</p>
+    <p>You currently do not have any orders placed!</p>
 }

@@ -31,6 +31,11 @@
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account<span class="caret"></span></a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenu">
                                     <a class="dropdown-item" asp-area="" asp-controller="Shopping" asp-action="PreviousOrderList">Previous Orders</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Shopping" asp-action="RefundedOrdersList">Refunded Orders</a>
+                                    @if (User.Identity.Name == "christian@winery.com")
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Shopping" asp-action="AddNewItem">Add New Wine</a>
+                                    }
                                 </div>
                             </li>
                         }

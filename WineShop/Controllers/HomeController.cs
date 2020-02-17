@@ -34,7 +34,10 @@ namespace WineShop.Controllers
         public IActionResult WineList()
         {
             List<Items> wineList = db.Items.ToList();
-            Global.walletAmount = db.Wallet.Find(db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name).Id).WalletAmount;
+            if (User.Identity.IsAuthenticated)
+            {
+                Global.walletAmount = db.Wallet.Find(db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name).Id).WalletAmount;
+            }
             return View(wineList);
         }
 

@@ -13,7 +13,20 @@ namespace WineShop.Controllers
     [Authorize]
     public class ShoppingController : Controller
     {
-        private WineShopDBContext db = new WineShopDBContext(); 
+        private WineShopDBContext db = new WineShopDBContext();
+        
+        private void GetData()
+        {
+            foreach (var item in db.Items)
+            {
+
+            }
+            foreach (var status in db.OrderStatuses)
+            {
+
+            }
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -59,15 +72,106 @@ namespace WineShop.Controllers
         {
             List<Orders> orderList = new List<Orders>();
             var currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name);
+            GetData();
             foreach (var order in db.Orders)
             {
-                if(order.UserId == currentUser.Id)
+                if(order.UserId == currentUser.Id && order.OrderStatus.OrderStatusId == 1)
                 {
                     orderList.Add(order);
                 }
             }
 
             return View("~/Views/Home/PreviousOrderList.cshtml", orderList);
+        }
+
+        public IActionResult RefundedOrdersList()
+        {
+            List<Orders> orderList = new List<Orders>();
+            var currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name);
+            GetData();
+            foreach (var order in db.Orders)
+            {
+                if (order.UserId == currentUser.Id && order.OrderStatus.OrderStatusId == 2)
+                {
+                    orderList.Add(order);
+                }
+            }
+
+            return View("~/Views/Home/RefundedOrderList.cshtml", orderList);
+        }
+
+        public IActionResult AddNewItem()
+        {
+            GetData();
+            NewItem newItem = new NewItem();
+            newItem.WineCategoryList = db.WineCategories.ToList();
+            newItem.WineTypeList = db.WineTypes.ToList();
+            return View("~/Views/Home/AddNewItem.cshtml", newItem);
+        }
+
+        public IActionResult CreateNewItem(Items newItem)
+        {
+            try
+            {
+                Items createItem = new Items()
+                {
+                    Name = newItem.Name,
+                    Description = newItem.Description,
+                    Price = newItem.Price,
+                    Quantity = newItem.Quantity,
+                    WineCategoryId = newItem.WineCategoryId,
+                    WineTypeId = newItem.WineTypeId
+                };
+                db.Items.Add(newItem);
+                db.SaveChanges();
+                return RedirectToAction("WineList", "Home");
+            }
+            catch
+            {
+                return View("~/Views/Shared/OopsError.cshtml");
+            }
+        }
+
+        public IActionResult VerifyRefund(int order)
+        {
+            GetData();
+            if (db.Orders.Find(order) != null && db.Orders.Find(order).OrderStatusId == 1)
+            {
+                return View("~/Views/Home/VerifyRefund.cshtml", order);
+            }
+            else
+            {
+                return View("~/Views/Shared/OopsError.cshtml");
+            }
+        }
+
+        public IActionResult RefundOrder(int refundOrder)
+        {
+            GetData();
+            if(db.Orders.Find(refundOrder) != null && db.Orders.Find(refundOrder).OrderStatusId == 1)
+            {
+                try
+                {
+                    var currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name);
+                    var returningOrder = db.Orders.Find(refundOrder);
+
+                    db.Wallet.Find(currentUser.Id).WalletAmount += returningOrder.OrderTotal;
+                    db.Items.Find(returningOrder.ItemId).Quantity += returningOrder.Quantity;
+                    db.Orders.Find(refundOrder).OrderStatusId = 2;
+
+                    db.SaveChanges();
+
+                    return RedirectToAction("PreviousOrderList", "Shopping");
+                }
+                catch
+                {
+                    return View("~/Views/Shared/OopsError.cshtml");
+                }
+            }
+            else
+            {
+                return View("~/Views/Shared/OopsError.cshtml");
+            }
         }
 
         void CreateOrder(AspNetUsers currentUser, int item)

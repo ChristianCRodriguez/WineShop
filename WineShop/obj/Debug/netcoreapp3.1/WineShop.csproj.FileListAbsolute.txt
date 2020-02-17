@@ -164,3 +164,6 @@ C:\Users\Christian\source\repos\WineShop\WineShop\bin\Debug\netcoreapp3.1\runtim
 C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\WineShop.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\WineShop.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\PreviousOrderList.cshtml.g.cs
+C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\VerifyRefund.cshtml.g.cs
+C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\RefundedOrderList.cshtml.g.cs
+C:\Users\Christian\source\repos\WineShop\WineShop\obj\Debug\netcoreapp3.1\Razor\Views\Home\AddNewItem.cshtml.g.cs

@@ -1,0 +1,43 @@
+﻿@model List<Orders>
+@{
+    ViewData["Title"] = "RefundedOrderList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Refunded Order List</h1>
+
+@if (Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>OrderDate</th>
+                <th>OrderStatus</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                @if (order.OrderStatusId == 2)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.OrderDate.Month/@order.OrderDate.Day/@order.OrderDate.Year</td>
+                        <td>@order.OrderStatus.OrderStatusDescription</td>
+                        <td>@order.Item.Name</td>
+                        <td>@order.Quantity</td>
+                        <td>@order.OrderTotal.ToString("C2")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>You currently have no refunded orders.</p>
+}
