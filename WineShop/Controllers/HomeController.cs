@@ -8,12 +8,15 @@ using Microsoft.Extensions.Logging;
 using WineShop.Data;
 using WineShop.Models;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
+using System.Net.Http;
 
 namespace WineShop.Controllers
 {
     public class HomeController : Controller
     {
         private WineShopDBContext db = new WineShopDBContext();
+        private JsonDocument jDoc;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -31,14 +34,29 @@ namespace WineShop.Controllers
             return View();
         }
 
-        public IActionResult WineList()
+        //public IActionResult WineList()
+        //{
+        //    List<Items> wineList = db.Items.ToList();
+        //    if (User.Identity.IsAuthenticated)
+        //    {
+        //        Global.walletAmount = db.Wallet.Find(db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name).Id).WalletAmount;
+        //    }
+        //    return View(wineList);
+        //}
+
+        public async Task<IActionResult> WineList()
         {
-            List<Items> wineList = db.Items.ToList();
-            if (User.Identity.IsAuthenticated)
+            var tempList = new List<Items>();
+            using (var httpClient = new HttpClient())
             {
-                Global.walletAmount = db.Wallet.Find(db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name).Id).WalletAmount;
+                using(var response = await httpClient.GetAsync("https://localhost:44334/api/Wine/GetWineList"))
+                {
+                    var stringResponse = await response.Content.ReadAsStringAsync();
+
+                    tempList = JsonSerializer.Deserialize<List<Items>>(stringResponse);
+                }
             }
-            return View(wineList);
+            return View(tempList);
         }
 
 

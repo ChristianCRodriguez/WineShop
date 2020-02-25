@@ -30,6 +30,8 @@ namespace WineShop
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
+            //services.AddMvc().AddJsonOptions(options => { options.JsonSerializerOptions.MaxDepth = 64; });
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.Configure<IdentityOptions>(options => options.SignIn.RequireConfirmedEmail = true);

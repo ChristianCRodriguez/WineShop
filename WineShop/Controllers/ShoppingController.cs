@@ -7,6 +7,9 @@ using WineShop.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text;
 
 namespace WineShop.Controllers
 {
@@ -68,16 +71,37 @@ namespace WineShop.Controllers
 
         }
 
-        public IActionResult PreviousOrderList()
+        //public IActionResult PreviousOrderList()
+        //{
+        //    List<Orders> orderList = new List<Orders>();
+        //    var currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name);
+        //    GetData();
+        //    foreach (var order in db.Orders)
+        //    {
+        //        if (order.UserId == currentUser.Id && order.OrderStatus.OrderStatusId == 1)
+        //        {
+        //            orderList.Add(order);
+        //        }
+        //    }
+
+        //    return View("~/Views/Home/PreviousOrderList.cshtml", orderList);
+        //}
+
+
+        public async Task<IActionResult> PreviousOrderList()
         {
             List<Orders> orderList = new List<Orders>();
-            var currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name);
-            GetData();
-            foreach (var order in db.Orders)
+            string currentUser = db.AspNetUsers.SingleOrDefault(u => u.Email == User.Identity.Name).Id;
+            var httpencode = System.Web.HttpUtility.UrlEncode(currentUser);
+            //figure out how to send json token through postasync
+            using (var httpClient = new HttpClient())
             {
-                if(order.UserId == currentUser.Id && order.OrderStatus.OrderStatusId == 1)
+                //using (var response = await httpClient.GetAsync("https://localhost:44334/api/Wine/GetPerviousOrders/?userID=" + httpencode))
+                using (var response = await httpClient.PostAsync("https://localhost:44334/api/Wine/GetPerviousOrders/", new StringContent(currentUser, Encoding.UTF8, "application/json")))
                 {
-                    orderList.Add(order);
+                    var newResponse = await response.Content.ReadAsStringAsync();
+
+                    orderList = JsonSerializer.Deserialize<List<Orders>>(newResponse);
                 }
             }
 
@@ -109,24 +133,46 @@ namespace WineShop.Controllers
             return View("~/Views/Home/AddNewItem.cshtml", newItem);
         }
 
-        public IActionResult CreateNewItem(Items newItem)
+        //public IActionResult CreateNewItem(Items newItem)
+        //{
+        //    try
+        //    {
+        //        Items createItem = new Items()
+        //        {
+        //            Name = newItem.Name,
+        //            Description = newItem.Description,
+        //            Price = newItem.Price,
+        //            Quantity = newItem.Quantity,
+        //            WineCategoryId = newItem.WineCategoryId,
+        //            WineTypeId = newItem.WineTypeId
+        //        };
+        //        db.Items.Add(newItem);
+        //        db.SaveChanges();
+        //        return RedirectToAction("WineList", "Home");
+        //    }
+        //    catch
+        //    {
+        //        return View("~/Views/Shared/OopsError.cshtml");
+        //    }
+        //}
+
+        public async Task<IActionResult> CreateNewItem(Items newItem = null)
         {
-            try
+            if (newItem != null)
             {
-                Items createItem = new Items()
+                var tempJson = JsonSerializer.Serialize(newItem);
+                using (var httpClient = new HttpClient())
                 {
-                    Name = newItem.Name,
-                    Description = newItem.Description,
-                    Price = newItem.Price,
-                    Quantity = newItem.Quantity,
-                    WineCategoryId = newItem.WineCategoryId,
-                    WineTypeId = newItem.WineTypeId
-                };
-                db.Items.Add(newItem);
-                db.SaveChanges();
+                    using (var response = await httpClient.GetAsync($"https://localhost:44334/api/Wine/AddNewItem?newItem={tempJson}"))
+                    {
+                        var newResponse = await response.Content.ReadAsStringAsync();
+
+                        //tempList = JsonConvert.DeserializeObject<List<Items>>(newResponse);
+                    }
+                }
                 return RedirectToAction("WineList", "Home");
             }
-            catch
+            else
             {
                 return View("~/Views/Shared/OopsError.cshtml");
             }
